@@ -1,6 +1,6 @@
 # Elfactory
 
-Multi-agent Christmas gift workshop powered by Datapizza-AI.
+Multi-agent Christmas gift workshop powered with Datapizza-AI.
 
 Sistema multi-agente natalizio: 28 elfi AI lavorano come veri artigiani per costruire regali richiesti via email. Include generazione immagini AI del prodotto finito e approvazione finale di Babbo Natale.
 
