@@ -216,3 +216,7 @@ generated_images/
 
 # Email drafts
 email_drafts/
+
+# Gmail API credentials and tokens
+credentials.json
+token.json

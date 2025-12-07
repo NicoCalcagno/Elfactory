@@ -5,6 +5,7 @@ from datetime import datetime
 from elfactory.config import settings
 from elfactory.core.state import WorkshopState
 from elfactory.tools.state_tools import active_gifts, current_gift_id
+from datapizza.tracing import ContextTracing
 
 # Import all agent creators
 from elfactory.agents.managers import (
@@ -172,24 +173,18 @@ class WorkshopOrchestrator:
         Returns:
             WorkshopState: The final state after complete processing
         """
-        # Generate unique gift ID
         gift_id = f"GIFT-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8].upper()}"
 
-        # Initialize WorkshopState
         state = WorkshopState(gift_id=gift_id, gift_request=email_content)
 
-        # Register in global registry
         active_gifts[gift_id] = state
         current_gift_id.set(gift_id)
 
-        # Start the autonomous workflow by calling only the first agent
-        # Reception Manager will delegate to Design Manager
-        # Design Manager will delegate to Production or Online Shopper
-        # And so on... completely autonomous!
         try:
-            result = self.reception_manager.run(email_content)
-            print(f"✓ Gift {gift_id} processing completed")
-            print(f"Final status: {state.status}")
+            with ContextTracing().trace(f"gift_workflow_{gift_id}") as trace:
+                result = self.reception_manager.run(email_content)
+                print(f"✓ Gift {gift_id} processing completed")
+                print(f"Final status: {state.status}")
 
         except Exception as e:
             print(f"✗ Error processing gift {gift_id}: {e}")
@@ -200,7 +195,6 @@ class WorkshopOrchestrator:
                 description=f"Processing failed: {str(e)}"
             )
 
-        # Return final state
         return state
 
 
