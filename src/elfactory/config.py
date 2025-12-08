@@ -22,5 +22,9 @@ class Settings(BaseSettings):
     enable_tracing: bool = True
     log_level: str = "INFO"
 
+    # Test settings
+    test_email_content: str = ""
+    test_recipient_email: str = ""
+
 
 settings = Settings()

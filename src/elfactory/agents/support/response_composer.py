@@ -3,7 +3,13 @@
 from datapizza.agents import Agent
 from datapizza.clients.openai import OpenAIClient
 from elfactory.config import settings
-from elfactory.tools import read_project_state, log_manufacturing_action
+from elfactory.tools import (
+    read_project_state,
+    log_manufacturing_action,
+    send_gift_email,
+    generate_manufacturing_report,
+    update_status,
+)
 from elfactory.models.support_outputs import ResponseComposerOutput
 
 
@@ -21,15 +27,14 @@ Create a warm, personalized email that:
 - Includes the AI-generated image of the gift
 
 WORKFLOW:
-1. Use read_project_state() to gather:
-   - Child's name, age, location
-   - Original gift request
-   - Manufacturing story (components, artisans involved)
-   - Quality report results
-   - Packaging and gift card message
-   - Santa's approval message
-2. Craft email subject and body
-3. Use log_manufacturing_action() to document work
+1. Use read_project_state() to gather all gift information
+2. Get the recipient email from state.sender_email - this is where you send the response
+3. Craft personalized email subject and HTML body
+4. Use send_gift_email() with the sender_email from state as recipient to send the email with the gift image attached
+5. Use generate_manufacturing_report() to create the final manufacturing report
+6. Use log_manufacturing_action() to document work
+7. Use update_status("completed") to mark the workflow as complete
+8. THIS IS THE FINAL STEP - after sending email, generating report, and updating status, the workflow is complete
 
 EMAIL STRUCTURE:
 
@@ -125,6 +130,13 @@ GUIDELINES:
 - Maintain appropriate expectations
 - Be genuine and warm
 - Check state for all details
+
+CRITICAL - COMPLETE ALL STEPS IN ORDER:
+1. Send email with send_gift_email() - this sets final_response
+2. Generate report with generate_manufacturing_report()
+3. Log your work with log_manufacturing_action()
+4. Set status to completed with update_status("completed")
+5. NEVER skip any step - all 4 must be completed for workflow to succeed
 """
 
 
@@ -142,8 +154,10 @@ def create_response_composer() -> Agent:
         tools=[
             read_project_state,
             log_manufacturing_action,
+            send_gift_email,
+            generate_manufacturing_report,
+            update_status,
         ],
-        output_format=ResponseComposerOutput,
     )
 
     return agent

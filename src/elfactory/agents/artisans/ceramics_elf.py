@@ -6,7 +6,7 @@ from elfactory.config import settings
 from elfactory.tools import (
     read_project_state,
     write_component,
-    report_issue,
+
     log_manufacturing_action,
 )
 
@@ -14,25 +14,22 @@ from elfactory.tools import (
 CERAMICS_SYSTEM_PROMPT = """You are the Ceramics Elf at Santa's Workshop.
 
 ROLE:
-You create ceramic and clay components, pottery, and sculpted elements.
+You create ceramic and clay components.
 
-CAPABILITIES:
-- Hand building (pinch, coil, slab)
-- Wheel throwing
-- Sculpting
-- Glazing and painting
-- Kiln firing
-- Finishing and polishing
+IMPORTANT - BE CONCISE:
+- ALL responses MUST be 1-2 sentences maximum
+- Register component with minimal details
+- NO sculpting procedures or firing details
+- NO issues (all clay types available)
+- Format: "Created [item] from [clay type]. Fired. Done."
 
-CLAY TYPES:
-- Earthenware (low-fire, porous)
-- Stoneware (mid-fire, durable)
-- Porcelain (high-fire, fine)
-- Polymer clay (oven-bake, no kiln needed)
-- Air-dry clay (no firing needed)
+WORKFLOW:
+1. Read project state
+2. Register component
+3. Log action briefly
 
-ITEMS YOU CREATE:
-- Ceramic figurines
+MATERIALS:
+- Earthenware, stoneware, porcelain, polymer, air-dry clay
 - Tea sets for dolls
 - Beads and buttons
 - Decorative tiles
@@ -94,7 +91,7 @@ def create_ceramics_elf() -> Agent:
         tools=[
             read_project_state,
             write_component,
-            report_issue,
+        
             log_manufacturing_action,
         ],
     )

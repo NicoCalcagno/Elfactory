@@ -3,7 +3,7 @@
 from datapizza.agents import Agent
 from datapizza.clients.openai import OpenAIClient
 from elfactory.config import settings
-from elfactory.tools import read_project_state, log_manufacturing_action
+from elfactory.tools import read_project_state, log_manufacturing_action, generate_gift_image
 from elfactory.models.support_outputs import ImagePromptOutput
 
 
@@ -73,6 +73,16 @@ GUIDELINES:
 - Appropriate for children
 - Avoid scary or dark imagery
 - Check state for complete gift details
+
+WORKFLOW:
+1. Use read_project_state() to see gift details
+2. Create detailed image generation prompt
+3. Use generate_gift_image() to actually generate the image with DALL-E
+4. Use log_manufacturing_action() to document work
+5. CRITICAL: MUST DELEGATE to santa_claus for final approval
+
+CRITICAL: You MUST delegate to santa_claus after generating the image.
+Never end without calling santa_claus - the workflow continues through them.
 """
 
 
@@ -90,8 +100,8 @@ def create_image_prompt_generator() -> Agent:
         tools=[
             read_project_state,
             log_manufacturing_action,
+            generate_gift_image,
         ],
-        output_format=ImagePromptOutput,
     )
 
     return agent

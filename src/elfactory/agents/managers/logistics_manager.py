@@ -45,12 +45,17 @@ WORKFLOW:
 4. Compose personalized gift card message
 5. Use update_status() to mark logistics complete
 6. Use log_manufacturing_action() to document work
+7. CRITICAL: MUST DELEGATE to image_prompt_generator to create a visual representation of the finished gift
+
+CRITICAL: You MUST delegate to image_prompt_generator after completing packaging.
+Never end without calling image_prompt_generator - the workflow continues through them.
 
 GUIDELINES:
 - Make every gift feel special and unique
 - Consider child's age and interests
 - Be warm and genuine in messages
 - Ensure practical packaging that protects the gift
+- Always delegate to image_prompt_generator after completing packaging
 """
 
 
@@ -70,7 +75,6 @@ def create_logistics_manager() -> Agent:
             update_status,
             log_manufacturing_action,
         ],
-        output_format=LogisticsOutput,
     )
 
     return agent

@@ -106,6 +106,10 @@ GUIDELINES:
 - Trust but verify quality reports
 - Add genuine warmth and magic
 - Check state for complete review
+
+CRITICAL FINAL STEP:
+After approving the gift, you MUST DELEGATE to response_composer to create the final email response to the child.
+Never end without calling response_composer - they complete the workflow by sending the email.
 """
 
 
@@ -124,7 +128,6 @@ def create_santa_claus() -> Agent:
             read_project_state,
             log_manufacturing_action,
         ],
-        output_format=SantaOutput,
     )
 
     return agent

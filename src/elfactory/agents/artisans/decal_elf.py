@@ -6,7 +6,7 @@ from elfactory.config import settings
 from elfactory.tools import (
     read_project_state,
     write_component,
-    report_issue,
+
     log_manufacturing_action,
 )
 
@@ -49,17 +49,19 @@ TOOLS:
 - Heat press (for transfers)
 - Clear coat spray
 
+IMPORTANT - BE CONCISE:
+- ALL responses MUST be under 3 sentences
+- Register components with minimal details only
+- NO lengthy explanations or specifications
+- Use tools to log, keep direct response brief
+- Format: "Applied [what] to [item]. Details: [brief]. Done."
+
 WORKFLOW:
-1. Use read_project_state() to see decoration needs
-2. Review components and design requirements
-3. Design or select appropriate decals
-4. Print/cut decals
-5. Prepare surface (clean, dry)
-6. Apply decal carefully (no bubbles)
-7. Seal with clear coat if needed
-8. Use write_component() to register decorated item
-9. Use log_manufacturing_action() to document work
-10. Report issues if surface unsuitable for decals
+1. Read project state for decoration needs
+2. Design/cut/print decals as needed
+3. Apply to prepared surface (no bubbles)
+4. Register decorated component
+5. Log action briefly
 
 COMPONENT REGISTRATION:
 Use write_component() with:
@@ -97,7 +99,7 @@ def create_decal_elf() -> Agent:
         tools=[
             read_project_state,
             write_component,
-            report_issue,
+        
             log_manufacturing_action,
         ],
     )

@@ -148,8 +148,9 @@ class WorkshopOrchestrator:
         # Online Shopper → Quality Manager (after finding product)
         self.online_shopper_elf.can_call([self.quality_manager])
 
-        # Quality Manager → Logistics Manager
-        self.quality_manager.can_call([self.logistics_manager])
+        # Quality Manager → Logistics Manager (after PASS)
+        # Quality Manager → Production Manager (for rework if needed)
+        self.quality_manager.can_call([self.logistics_manager, self.production_manager])
 
         # Logistics Manager → Image Prompt Generator
         self.logistics_manager.can_call([self.image_prompt_generator])
@@ -160,7 +161,7 @@ class WorkshopOrchestrator:
         # Santa Claus → Response Composer
         self.santa_claus.can_call([self.response_composer])
 
-    def process_gift_request(self, email_content: str) -> WorkshopState:
+    def process_gift_request(self, email_content: str, sender_email: str = "") -> WorkshopState:
         """
         Process a gift request from start to finish.
 
@@ -169,13 +170,18 @@ class WorkshopOrchestrator:
 
         Args:
             email_content: The email/text containing the gift request
+            sender_email: Email address to send the response to (optional)
 
         Returns:
             WorkshopState: The final state after complete processing
         """
         gift_id = f"GIFT-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8].upper()}"
 
-        state = WorkshopState(gift_id=gift_id, gift_request=email_content)
+        state = WorkshopState(
+            gift_id=gift_id,
+            gift_request=email_content,
+            sender_email=sender_email
+        )
 
         active_gifts[gift_id] = state
         current_gift_id.set(gift_id)
@@ -210,15 +216,16 @@ def get_orchestrator() -> WorkshopOrchestrator:
     return _orchestrator
 
 
-def process_gift_request(email_content: str) -> WorkshopState:
+def process_gift_request(email_content: str, sender_email: str = "") -> WorkshopState:
     """
     Convenience function to process a gift request.
 
     Args:
         email_content: The email/text containing the gift request
+        sender_email: Email address to send the response to (optional)
 
     Returns:
         WorkshopState: The final state after processing
     """
     orchestrator = get_orchestrator()
-    return orchestrator.process_gift_request(email_content)
+    return orchestrator.process_gift_request(email_content, sender_email)

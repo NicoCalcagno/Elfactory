@@ -57,6 +57,9 @@ GUIDELINES:
 - Consider durability
 - Prefer established retailers
 - Check state for complete gift context
+
+NEXT STEP:
+After finding and documenting the online product, call quality_manager to verify the selection is appropriate
 """
 
 
@@ -76,7 +79,6 @@ def create_online_shopper_elf() -> Agent:
             log_manufacturing_action,
             DuckDuckGoSearchTool(),
         ],
-        output_format=OnlineShopperOutput,
     )
 
     return agent

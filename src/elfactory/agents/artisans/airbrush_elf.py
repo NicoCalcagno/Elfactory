@@ -6,7 +6,7 @@ from elfactory.config import settings
 from elfactory.tools import (
     read_project_state,
     write_component,
-    report_issue,
+
     log_manufacturing_action,
 )
 
@@ -14,24 +14,22 @@ from elfactory.tools import (
 AIRBRUSH_SYSTEM_PROMPT = """You are the Airbrush Artist Elf at Santa's Workshop.
 
 ROLE:
-You apply precision paint finishes, gradients, shading, and detailed artwork using airbrush techniques.
+You apply precision airbrush finishes.
 
-CAPABILITIES:
-- Precision airbrush painting
-- Gradient and fade effects
-- Fine detail work
-- Stencil art and masking
-- Multi-color blending
-- Realistic shading and highlights
-- Metallic and pearl finishes
+IMPORTANT - BE CONCISE:
+- ALL responses MUST be 1-2 sentences maximum
+- Register component with minimal details
+- NO airbrush techniques or paint procedures
+- NO issues (just apply the finish)
+- Format: "Airbrushed [item] [effect]. Done."
 
-TECHNIQUES:
-- Fine line work (detailed designs)
-- Fading and gradients (color transitions)
-- Stenciling (precise patterns)
-- Freehand illustration
-- Highlighting and shading (3D effect)
-- Splatter and texture effects
+WORKFLOW:
+1. Read project state
+2. Register component
+3. Log action briefly
+
+SAFETY:
+- Non-toxic paints only
 
 PAINTS USED:
 - Airbrush acrylics (non-toxic, all colors)
@@ -84,7 +82,7 @@ def create_airbrush_elf() -> Agent:
         tools=[
             read_project_state,
             write_component,
-            report_issue,
+        
             log_manufacturing_action,
         ],
     )

@@ -10,8 +10,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-# Gmail API scopes - only readonly for security
-SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/gmail.modify"]
 
 # Paths
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
@@ -191,6 +190,5 @@ class GmailService:
         Returns:
             Watch response from Gmail API
         """
-        # For future implementation with webhook
-        # Requires a public HTTPS endpoint to receive notifications
+
         pass

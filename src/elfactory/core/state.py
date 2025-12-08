@@ -61,6 +61,7 @@ class WorkshopState(BaseModel):
 
     child_info: ChildInfo | None = None
     gift_request: str = ""
+    sender_email: str = ""  # Email address to send the response to
 
     feasibility: str = "unknown"
     manufacturing_decision: str = "pending"

@@ -3,6 +3,7 @@
 import json
 from contextvars import ContextVar
 from datapizza.tools import tool
+from elfactory.utils.agent_logger import get_agent_logger
 
 active_gifts: dict[str, "WorkshopState"] = {}
 current_gift_id: ContextVar[str] = ContextVar("current_gift_id")
@@ -71,6 +72,10 @@ def write_component(
         "status": "completed",
     })
 
+    # Log component creation
+    logger = get_agent_logger()
+    logger.log_component_created(component_id, component_type, created_by)
+
     return f"✓ Component '{component_id}' successfully registered by {created_by}"
 
 
@@ -103,6 +108,10 @@ def report_issue(
         description=description,
     )
 
+    # Log issue
+    logger = get_agent_logger()
+    logger.log_issue(severity, description, reported_by)
+
     return f"⚠ Issue reported by {reported_by} (severity: {severity})"
 
 
@@ -123,7 +132,12 @@ def update_status(new_status: str) -> str:
     if not state:
         return "Error: No active gift project found"
 
+    old_status = state.status
     state.update_status(new_status)
+
+    # Log status change
+    logger = get_agent_logger()
+    logger.log_status_change(gift_id, old_status, new_status, "system")
 
     return f"✓ Status updated to: {new_status}"
 
@@ -158,3 +172,41 @@ def log_manufacturing_action(
     )
 
     return f"✓ Action logged: {agent} - {action}"
+
+
+@tool
+def set_child_info(
+    name: str,
+    age: int = None,
+    location: str = None,
+) -> str:
+    """
+    Set the child information in the workshop state.
+
+    Args:
+        name: Child's name
+        age: Child's age (optional)
+        location: Child's location/city (optional)
+
+    Returns:
+        Confirmation message
+    """
+    from elfactory.core.state import ChildInfo
+
+    gift_id = current_gift_id.get()
+    state = active_gifts.get(gift_id)
+
+    if not state:
+        return "Error: No active gift project found"
+
+    state.child_info = ChildInfo(
+        name=name,
+        age=age,
+        location=location,
+    )
+
+    # Log child info setting
+    logger = get_agent_logger()
+    logger.log_child_info(name, age, location)
+
+    return f"✓ Child information set: {name}, age {age}, from {location}"

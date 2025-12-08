@@ -5,10 +5,12 @@ and triggers the workshop workflow when emails arrive.
 """
 
 import time
+import logging
 from datetime import datetime
 
 from elfactory.services.gmail_service import GmailService
 from elfactory.core.orchestrator import process_gift_request
+from elfactory.utils import setup_logging
 
 
 # Configuration
@@ -42,7 +44,7 @@ def process_email(gmail: GmailService, message: dict):
     """
     print()
     print("=" * 60)
-    print(f"📧 New gift request received!")
+    print(f"New gift request received!")
     print(f"From: {message['from']}")
     print(f"Subject: {message['subject']}")
     print(f"Date: {message['date']}")
@@ -63,14 +65,17 @@ def process_email(gmail: GmailService, message: dict):
 
     try:
         # Process the gift request through the workshop
-        print("🎄 Starting workshop workflow...")
+        print("Starting workshop workflow...")
         print()
 
-        state = process_gift_request(email_content)
+        # Extract sender email for response
+        sender_email = message.get('from', '')
+
+        state = process_gift_request(email_content, sender_email)
 
         print()
         print("=" * 60)
-        print(f"✓ Gift request processed!")
+        print(f"Gift request processed!")
         print(f"Gift ID: {state.gift_id}")
         print(f"Status: {state.status}")
         print(f"Child: {state.child_info.name if state.child_info else 'Unknown'}")
@@ -84,7 +89,7 @@ def process_email(gmail: GmailService, message: dict):
 
     except Exception as e:
         print()
-        print(f"✗ Error processing gift request: {e}")
+        print(f"Error processing gift request: {e}")
         print()
         # Don't mark as read if processing failed
         # Will retry on next check
@@ -100,7 +105,7 @@ def monitor_loop(gmail: GmailService):
         gmail: GmailService instance
     """
     print()
-    print("🎅 Elfactory Email Monitor Started")
+    print("Elfactory Email Monitor Started")
     print("=" * 60)
     print(f"Checking for new emails every {CHECK_INTERVAL} seconds")
     print("Press Ctrl+C to stop")
@@ -141,22 +146,26 @@ def monitor_loop(gmail: GmailService):
         except KeyboardInterrupt:
             print()
             print("=" * 60)
-            print("🛑 Monitor stopped by user")
+            print("Monitor stopped by user")
             print("=" * 60)
             break
 
         except Exception as e:
-            print(f"✗ Error in monitor loop: {e}")
+            print(f"Error in monitor loop: {e}")
             print(f"Retrying in {CHECK_INTERVAL} seconds...")
             time.sleep(CHECK_INTERVAL)
 
 
 def main():
     """Main entry point."""
+    logger = setup_logging()
+
     try:
         # Initialize Gmail service
+        logger.info("Initializing Gmail service...")
         print("Initializing Gmail service...")
         gmail = GmailService()
+        logger.info("Gmail service initialized")
         print("✓ Gmail service initialized")
 
         # Start monitoring
@@ -165,7 +174,7 @@ def main():
     except FileNotFoundError as e:
         print()
         print("=" * 60)
-        print("✗ Setup Required")
+        print("Setup Required")
         print("=" * 60)
         print()
         print(f"Error: {e}")

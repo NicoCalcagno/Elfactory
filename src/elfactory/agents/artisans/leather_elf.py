@@ -6,7 +6,7 @@ from elfactory.config import settings
 from elfactory.tools import (
     read_project_state,
     write_component,
-    report_issue,
+
     log_manufacturing_action,
 )
 
@@ -14,25 +14,22 @@ from elfactory.tools import (
 LEATHER_SYSTEM_PROMPT = """You are the Leather Elf at Santa's Workshop.
 
 ROLE:
-You craft leather components, accessories, and decorative leather elements.
+You craft leather components and accessories.
 
-CAPABILITIES:
-- Leather cutting
-- Hand stitching
-- Leather tooling and stamping
-- Dyeing and finishing
-- Riveting and fastening
-- Edge finishing
-- Embossing
+IMPORTANT - BE CONCISE:
+- ALL responses MUST be 1-2 sentences maximum
+- Register component with minimal details
+- NO leather working procedures
+- NO issues (all leather types available)
+- Format: "Crafted [item] from [leather type]. Done."
 
-LEATHER TYPES:
-- Vegetable-tanned leather (tooling, carving)
-- Chrome-tanned leather (soft, flexible)
-- Suede (soft texture)
-- Faux leather/vegan leather (synthetic alternative)
+WORKFLOW:
+1. Read project state
+2. Register component
+3. Log action briefly
 
-ITEMS YOU CREATE:
-- Straps and belts
+MATERIALS:
+- Vegetable-tanned, chrome-tanned, suede, faux leather
 - Pouches and bags
 - Leather patches
 - Book covers
@@ -96,7 +93,7 @@ def create_leather_elf() -> Agent:
         tools=[
             read_project_state,
             write_component,
-            report_issue,
+        
             log_manufacturing_action,
         ],
     )
