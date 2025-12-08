@@ -1,160 +1,108 @@
-# Elfactory
+```
+     _____ _  __            _
+    | ____| |/ _| __ _  ___| |_ ___  _ __ _   _
+    |  _| | | |_ / _` |/ __| __/ _ \| '__| | | |
+    | |___| |  _| (_| | (__| || (_) | |  | |_| |
+    |_____|_|_|  \__,_|\___|\__\___/|_|   \__, |
+                                          |___/
+          🎄 AI-Powered Gift Workshop 🎅
+```
 
 Multi-agent Christmas gift workshop powered with Datapizza-AI.
 
-Sistema multi-agente natalizio: 26 elfi AI lavorano come veri artigiani per costruire regali richiesti via email. Include generazione immagini AI del prodotto finito e approvazione finale di Babbo Natale.
+26 AI elves work autonomously to manufacture gifts requested via email, with AI-generated images and Santa's final approval.
 
 **Challenge:** #madewithdatapizzaai - Datapizza Community Christmas Challenge
 
-## Quick Start
+## Setup
 
-### 1. Setup Gmail API
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project
-3. Enable Gmail API
-4. Create OAuth2 credentials (Desktop app)
-5. Download `credentials.json` to project root
-
-### 2. Install and Configure
+### 1. Install
 
 ```bash
 git clone <repo-url>
 cd Elfactory
-cp .env.example .env
-```
-
-Edit `.env` and add:
-- `OPENAI_API_KEY` - Your OpenAI API key
-- `OPENAI_MODEL=gpt-4o-mini` - Or gpt-4
-- Other settings as needed
-
-### 3. Install Dependencies
-
-```bash
 uv sync
 ```
 
-### 4. Authenticate Gmail
+### 2. Configure
 
 ```bash
-uv run python scripts/setup_gmail.py
+cp .env.example .env
 ```
 
-This opens your browser to authenticate with Gmail. Authorize the app to read and modify emails.
+Edit `.env`:
+```bash
+OPENAI_API_KEY=your-key-here
+OPENAI_MODEL=gpt-5-mini
+```
 
-### 5. Start Email Monitor
+### 3. Test (Recommended)
+
+Test the workflow without Gmail:
 
 ```bash
-uv run python scripts/monitor_emails.py
-```
+# Optional: customize test email
+export TEST_RECIPIENT_EMAIL="your-email@gmail.com"
+export TEST_EMAIL_CONTENT="Caro Babbo Natale, vorrei un drone..."
 
-The monitor will:
-- Check for unread emails every 60 seconds
-- Process emails with "letterina" in the subject
-- Trigger the autonomous multi-agent workflow
-- Mark processed emails as read
-
-### 6. Send a Test Email
-
-Send an email to your Gmail account with:
-- **Subject:** Must contain "letterina"
-- **Body:** A gift request from a child (name, age, what they want)
-
-Example:
-```
-Ciao Babbo Natale, mi chiamo Marco, ho 8 anni.
-Per Natale vorrei una macchinina telecomandata rossa.
-```
-
-## Architecture
-
-### Agent Hierarchy (26 AI Agents)
-
-**Tier 0: Final Approver**
-- Santa Claus - Reviews and blesses all gifts
-
-**Tier 1: Manager Elves (5)**
-- Reception Manager - Receives and processes gift requests
-- Design Manager - Analyzes feasibility and creates blueprints
-- Production Manager - Coordinates artisan elves
-- Quality Manager - Inspects safety and quality
-- Logistics Manager - Handles packaging and gift cards
-
-**Tier 2: Artisan Elves (19)**
-- Material Workers: 3D Printer, Woodworker, Blacksmith, Fabric, Leather, Glass, Ceramics
-- Assembly Team: Mechanic, Electronics, Battery, Welding
-- Finishing Artists: Painter, Airbrush, Engraver, Polish, Decal
-- Specialists: Sound Engineer, Light Designer, Software, Librarian
-
-**Tier 3: Support Agents (3)**
-- Online Shopper - Finds products that can't be manufactured
-- Image Prompt Generator - Creates prompts for gift visualization
-- Response Composer - Writes final email to child
-
-### Autonomous Workflow
-
-The workflow is fully autonomous using Datapizza-AI's `can_call()` delegation:
-
-1. **Reception Manager** extracts child info → calls **Design Manager**
-2. **Design Manager** decides feasibility → calls **Production Manager** or **Online Shopper**
-3. **Production Manager** delegates to artisan elves → calls **Quality Manager**
-4. **Quality Manager** inspects gift → calls **Logistics Manager**
-5. **Logistics Manager** prepares packaging → calls **Image Prompt Generator**
-6. **Image Prompt Generator** creates visualization prompt → calls **Santa Claus**
-7. **Santa Claus** reviews and approves → calls **Response Composer**
-8. **Response Composer** writes final email to child
-
-## Tech Stack
-
-- **Framework:** Datapizza-AI v0.0.9
-- **LLM:** OpenAI GPT-4o-mini / GPT-4
-- **Email:** Gmail API with OAuth2
-- **Image Generation:** TBD (Gemini/Banana Pro) - prompt generation implemented
-- **Monitoring:** OpenTelemetry + ContextTracing
-- **State Management:** Pydantic models with ContextVar for thread-safety
-
-## Features
-
-- ✅ Autonomous multi-agent workflow
-- ✅ Gmail API integration with email monitoring
-- ✅ Structured state management
-- ✅ OpenTelemetry tracing with token usage tracking
-- ✅ Safety and quality checks
-- ✅ Age-appropriate gift decisions
-- ✅ Online shopping fallback for impossible gifts
-- ✅ AI image generation with DALL-E 3
-- ✅ Automatic email response delivery
-- ✅ File logging system
-- ✅ Manufacturing report generation
-
-## Testing
-
-Test the complete workflow end-to-end:
-
-```bash
+# Run test
 uv run python scripts/test_workflow.py
 ```
 
-This will:
-- Process a sample gift request (toy car for an 8-year-old)
-- Execute the complete autonomous workflow
-- Verify all stages complete successfully
-- Show detailed output including components, manufacturing log, and final status
+The test will:
+- Process the gift request through all 26 agents
+- Create components and manufacturing log
+- Generate AI image of the finished gift
+- Send response email (if `TEST_RECIPIENT_EMAIL` is set)
+- Verify workflow completion
 
-Expected output:
-- Gift processed through all workflow stages
-- Components created by artisan elves
-- Quality inspection passed
-- Santa's approval received
-- Final response composed
+Expected result: `TEST RESULT: ✓ PASSED`
 
+### 4. Production (Optional - Gmail Integration)
 
-## Output Files
+For automatic email monitoring:
 
-The system generates the following outputs for each gift:
+1. **Setup Gmail API:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create project → Enable Gmail API → Create OAuth2 credentials (Desktop app)
+   - Download `credentials.json` to project root
 
-- **Logs:** `logs/elfactory_YYYYMMDD_HHMMSS.log` - Detailed workflow logs including agent interactions
-- **Images:** `logs/images/{GIFT_ID}.png` - AI-generated gift visualization
-- **Reports:** `logs/reports/{GIFT_ID}_report.md` - Complete manufacturing report with components and agents
+2. **Authenticate:**
+   ```bash
+   uv run python scripts/setup_gmail.py
+   ```
+
+3. **Start monitor:**
+   ```bash
+   uv run python scripts/monitor_emails.py
+   ```
+
+4. **Send test email** with subject containing "letterina"
+
+## How It Works
+
+**26 AI Agents** collaborate autonomously to process gift requests:
+
+1. **Reception Manager** → extracts child info
+2. **Design Manager** → decides manufacture vs. online purchase
+3. **Production Manager** → delegates to 19 artisan elves (3D printer, woodworker, electronics, etc.)
+4. **Quality Manager** → safety inspection
+5. **Logistics Manager** → packaging
+6. **Image Prompt Generator** → creates DALL-E prompt
+7. **Santa Claus** → final approval
+8. **Response Composer** → sends email with gift image
+
+## Output
+
+Each workflow generates:
+- `logs/elfactory_YYYYMMDD_HHMMSS.log` - Detailed agent logs
+- `logs/images/{GIFT_ID}.png` - AI-generated gift image (DALL-E 3)
+- `logs/reports/{GIFT_ID}_report.md` - Manufacturing report
+
+## Tech Stack
+
+- **Framework:** Datapizza-AI
+- **LLM:** OpenAI GPT-4o-mini
+- **Image:** DALL-E 3
+- **Email:** Gmail API (optional)
 
