@@ -8,6 +8,8 @@
           🎄 AI-Powered Gift Workshop 🎅
 ```
 
+![Elfactory Overview](sum_image.png)
+
 Multi-agent Christmas gift workshop powered with Datapizza-AI.
 
 26 AI elves work autonomously to manufacture gifts requested via email, with AI-generated images and Santa's final approval.
