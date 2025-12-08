@@ -38,10 +38,10 @@ def send_gift_email(
         message['To'] = recipient_email
         message['Subject'] = subject
 
-        html_part = MIMEText(html_body, 'html')
-        message.attach(html_part)
-
+        # Replace image placeholder if image exists
         if image_path and Path(image_path).exists():
+            html_body = html_body.replace('[IMAGE_PLACEHOLDER]', '<img src="cid:gift_image" style="max-width: 600px; height: auto;" />')
+
             with open(image_path, 'rb') as f:
                 img_data = f.read()
             image = MIMEImage(img_data)
@@ -49,9 +49,8 @@ def send_gift_email(
             image.add_header('Content-Disposition', 'inline', filename='gift.png')
             message.attach(image)
 
-            html_body = html_body.replace('[IMAGE_PLACEHOLDER]', '<img src="cid:gift_image" style="max-width: 600px; height: auto;" />')
-            html_part = MIMEText(html_body, 'html')
-            message.attach(html_part)
+        html_part = MIMEText(html_body, 'html')
+        message.attach(html_part)
 
         raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode('utf-8')
 
