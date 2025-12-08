@@ -42,15 +42,18 @@ def send_gift_email(
         if image_path and Path(image_path).exists():
             html_body = html_body.replace('[IMAGE_PLACEHOLDER]', '<img src="cid:gift_image" style="max-width: 600px; height: auto;" />')
 
+        # IMPORTANT: Attach HTML BEFORE images for proper inline display
+        html_part = MIMEText(html_body, 'html')
+        message.attach(html_part)
+
+        # Attach image after HTML
+        if image_path and Path(image_path).exists():
             with open(image_path, 'rb') as f:
                 img_data = f.read()
             image = MIMEImage(img_data)
             image.add_header('Content-ID', '<gift_image>')
             image.add_header('Content-Disposition', 'inline', filename='gift.png')
             message.attach(image)
-
-        html_part = MIMEText(html_body, 'html')
-        message.attach(html_part)
 
         raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode('utf-8')
 
