@@ -1,0 +1,16 @@
+# Ignore all logs
+*.log
+
+# Ignore generated images
+images/*.png
+images/*.jpg
+images/*.jpeg
+
+# Ignore generated reports
+reports/*.md
+reports/*.txt
+
+# Keep directory structure
+!.gitkeep
+!images/.gitkeep
+!reports/.gitkeep

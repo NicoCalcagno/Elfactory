@@ -135,8 +135,11 @@ CRITICAL - COMPLETE ALL STEPS IN ORDER:
 1. Send email with send_gift_email() - this sets final_response
 2. Generate report with generate_manufacturing_report()
 3. Log your work with log_manufacturing_action()
-4. Set status to completed with update_status("completed")
-5. NEVER skip any step - all 4 must be completed for workflow to succeed
+4. Set status to completed with update_status("completed") - THIS IS MANDATORY!
+
+ABSOLUTELY REQUIRED: After logging your work, you MUST call update_status("completed").
+The workflow will FAIL if you don't set the status to "completed".
+Do NOT end your work without calling update_status("completed") as the final step.
 """
 
 
