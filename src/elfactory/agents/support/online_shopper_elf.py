@@ -4,7 +4,7 @@ from datapizza.agents import Agent
 from datapizza.clients.openai import OpenAIClient
 from datapizza.tools.duckduckgo import DuckDuckGoSearchTool
 from elfactory.config import settings
-from elfactory.tools import read_project_state, log_manufacturing_action
+from elfactory.tools import read_project_state, log_manufacturing_action, update_status
 from elfactory.models.support_outputs import OnlineShopperOutput
 
 
@@ -40,7 +40,8 @@ WORKFLOW:
 3. Evaluate search results
 4. Select best option
 5. Use log_manufacturing_action() to document search
-6. Return structured output with product details
+6. Use update_status("product_selected") to mark selection complete
+7. CRITICAL: MUST DELEGATE to quality_manager to verify the selection
 
 OUTPUT REQUIREMENTS:
 - Be honest if nothing suitable found
@@ -58,8 +59,8 @@ GUIDELINES:
 - Prefer established retailers
 - Check state for complete gift context
 
-NEXT STEP:
-After finding and documenting the online product, call quality_manager to verify the selection is appropriate
+CRITICAL: You MUST delegate to quality_manager after completing your search.
+Never end without calling quality_manager - the workflow continues through them.
 """
 
 
@@ -77,6 +78,7 @@ def create_online_shopper_elf() -> Agent:
         tools=[
             read_project_state,
             log_manufacturing_action,
+            update_status,
             DuckDuckGoSearchTool(),
         ],
     )

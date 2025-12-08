@@ -205,8 +205,4 @@ def set_child_info(
         location=location,
     )
 
-    # Log child info setting
-    logger = get_agent_logger()
-    logger.log_child_info(name, age, location)
-
     return f"✓ Child information set: {name}, age {age}, from {location}"

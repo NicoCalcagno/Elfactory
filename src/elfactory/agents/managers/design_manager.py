@@ -44,7 +44,12 @@ WORKFLOW:
 1. Use read_project_state()
 2. Make design decision
 3. Use log_manufacturing_action() to record decision
-4. Call production_manager OR online_shopper_elf
+4. CRITICAL: MUST DELEGATE to next agent:
+   - If decision is "manufattura" → call production_manager
+   - If decision is "acquisto_online" → call online_shopper_elf
+
+CRITICAL: You MUST delegate after making your decision.
+Never end without calling either production_manager or online_shopper_elf.
 
 GUIDELINES:
 - Be brief and direct
